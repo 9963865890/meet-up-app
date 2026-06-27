@@ -47,7 +47,7 @@ function EventList() {
         <div className="col-md-8">
           <input
             className="form-control"
-            placeholder="Search by title..."
+            placeholder="Search by title and tag..."
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
