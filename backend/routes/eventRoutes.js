@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   if (search) {
   filter.$or = [
     { title: { $regex: search, $options: "i" } },
-    { tags: { $elemMatch: { $regex: search, $options: "i" } } }
+    { tags: search }
   ];
 }
 
