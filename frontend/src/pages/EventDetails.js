@@ -19,7 +19,7 @@ function EventDetails() {
     }
   };
 
-  if (!event) return <h3>Loading...</h3>;
+  if (!event) return <h3>Loading event details...</h3>;
 
   return (
     <div className="card p-3">
@@ -35,7 +35,6 @@ function EventDetails() {
       <p><b>Date:</b> {event.date}</p>
       <p><b>Topic:</b> {event.topic}</p>
       <p><b>Description:</b> {event.description}</p>
-
       <p><b>Venue:</b> {event.venue}</p>
       <p><b>Address:</b> {event.address}</p>
       <p><b>Price:</b> {event.price}</p>
