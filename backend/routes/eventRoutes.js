@@ -14,14 +14,10 @@ router.get("/", async (req, res) => {
 
 if (search) {
   filter = {
-    $and: [
-      type && type !== "Both" ? { type } : {},
-      {
-        $or: [
-          { title: { $regex: search, $options: "i" } },
-          { tags: search }
-        ]
-      }
+    ...filter,
+    $or: [
+      { title: { $regex: search, $options: "i" } },
+      { tags: { $in: [new RegExp(search, "i")] } }
     ]
   };
 }
