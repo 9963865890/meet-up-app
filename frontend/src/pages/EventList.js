@@ -36,7 +36,7 @@ function EventList() {
           <select
             className="form-select"
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setSearch(e.target.value.toLowerCase())}
           >
             <option>Both</option>
             <option>Online</option>
@@ -48,7 +48,7 @@ function EventList() {
           <input
             className="form-control"
             placeholder="Search by title and tags..."
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value.toLowerCase())}
           />
         </div>
       </div>
