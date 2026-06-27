@@ -12,13 +12,12 @@ router.get("/", async (req, res) => {
     filter.type = type;
   }
 
-  if (search) {
+ if (search) {
   filter.$or = [
     { title: { $regex: search, $options: "i" } },
-    { tags: search }
+    { tags: { $in: [search] } }
   ];
 }
-
   const events = await Event.find(filter);
   res.json(events);
 });
