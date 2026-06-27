@@ -17,7 +17,7 @@ if (search) {
     ...filter,
     $or: [
       { title: { $regex: search, $options: "i" } },
-      { tags: { $in: [new RegExp(search, "i")] } }
+      { tags: search }
     ]
   };
 }
