@@ -8,23 +8,29 @@ function EventList() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-  const timeout = setTimeout(() => {
-    fetchEvents();
-  }, 300); 
+    const delay = setTimeout(() => {
+      fetchEvents();
+    }, 300);
 
-  return () => clearTimeout(timeout);
-}, [type, search]);
+    return () => clearTimeout(delay);
+  }, [type, search]);
 
   const fetchEvents = async () => {
     const res = await API.get(`/events?type=${type}&search=${search}`);
-    setEvents(res.data);
+
+    // remove duplicates safely
+    const uniqueEvents = Array.from(
+      new Map(res.data.map(item => [item._id, item])).values()
+    );
+
+    setEvents(uniqueEvents);
   };
 
   return (
     <div>
       <h2 className="mb-3">🎉 Meetup Events</h2>
 
-      {/* Filters */}
+      {/* FILTERS */}
       <div className="row mb-4">
         <div className="col-md-4">
           <select
@@ -41,19 +47,21 @@ function EventList() {
         <div className="col-md-8">
           <input
             className="form-control"
-            placeholder="Search by title or tags..."
+            placeholder="Search by title..."
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Cards */}
+      {/* EVENT CARDS */}
       <div className="row">
         {events.map((e) => (
           <div className="col-md-4 mb-4" key={e._id}>
             <div className="card shadow-sm h-100">
+
               <img
                 src={e.image}
+                alt={e.title}
                 className="card-img-top"
                 style={{ height: "180px", objectFit: "cover" }}
               />
@@ -61,11 +69,9 @@ function EventList() {
               <div className="card-body">
                 <h5>{e.title}</h5>
 
-                <p className="mb-1">
-                  <span className="badge bg-primary">{e.type}</span>
-                </p>
+                <span className="badge bg-primary">{e.type}</span>
 
-                <p className="text-muted">{e.date}</p>
+                <p className="text-muted mt-2">{e.date}</p>
 
                 <Link
                   to={`/event/${e._id}`}
@@ -74,6 +80,7 @@ function EventList() {
                   View Details
                 </Link>
               </div>
+
             </div>
           </div>
         ))}

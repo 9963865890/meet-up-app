@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "http://127.0.0.1:5000/api"
+  baseURL: "https://meet-up-app-tzo1.vercel.app/api"
 });

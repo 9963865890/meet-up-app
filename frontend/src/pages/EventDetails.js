@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { API } from "./api";
 import { useParams } from "react-router-dom";
+import { API } from "./api";
 
 function EventDetails() {
   const { id } = useParams();
@@ -8,7 +8,7 @@ function EventDetails() {
 
   useEffect(() => {
     loadEvent();
-  }, []);
+  }, [id]);
 
   const loadEvent = async () => {
     const res = await API.get(`/events/${id}`);
@@ -18,42 +18,55 @@ function EventDetails() {
   if (!event) return <h4>Loading...</h4>;
 
   return (
-    <div className="card shadow p-4">
+    <div className="container">
+
       <img
         src={event.image}
-        className="img-fluid rounded mb-3"
-        style={{ maxHeight: "400px", objectFit: "cover" }}
+        alt={event.title}
+        className="img-fluid mb-4"
+        style={{ borderRadius: "10px" }}
       />
 
       <h2>{event.title}</h2>
 
-      <span className="badge bg-success mb-2">{event.type}</span>
+      <span className="badge bg-success">{event.type}</span>
 
-      <p className="text-muted">{event.date}</p>
-
-      <p>{event.description}</p>
+      <p className="mt-3">{event.description}</p>
 
       <hr />
 
+      <h5>📌 Event Info</h5>
       <p><b>Topic:</b> {event.topic}</p>
-      <p><b>Timings:</b> {event.timings}</p>
-      <p><b>Speakers:</b> {event.speakers?.join(", ")}</p>
+      <p><b>Date:</b> {event.date}</p>
+      <p><b>Time:</b> {event.timings}</p>
+      <p><b>Price:</b> {event.price === 0 ? "Free" : `₹${event.price}`}</p>
 
-      <p><b>Price:</b> ₹{event.price}</p>
-      <p><b>Venue:</b> {event.venue}</p>
-      <p><b>Address:</b> {event.address}</p>
+      <hr />
 
-      <p>
-        <b>Tags:</b>{" "}
-        {event.tags?.map((t, i) => (
-          <span key={i} className="badge bg-secondary me-1">
-            {t}
+      <h5>📍 Venue</h5>
+      <p>{event.venue}</p>
+      <p>{event.address}</p>
+
+      <hr />
+
+      <h5>🎤 Speakers</h5>
+      <ul>
+        {event.speakers?.map((s, i) => (
+          <li key={i}>{s}</li>
+        ))}
+      </ul>
+
+      <hr />
+
+      <h5>🏷 Tags</h5>
+      <div>
+        {event.tags?.map((tag, i) => (
+          <span key={i} className="badge bg-secondary me-2">
+            {tag}
           </span>
         ))}
-      </p>
+      </div>
 
-      <p><b>Dress Code:</b> {event.dressCode}</p>
-      <p><b>Age Restriction:</b> {event.ageRestriction}</p>
     </div>
   );
 }
