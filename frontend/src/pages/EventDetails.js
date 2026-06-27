@@ -1,74 +1,92 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { API } from "./api";
+import { Link } from "react-router-dom";
 
-function EventDetails() {
-  const { id } = useParams();
-  const [event, setEvent] = useState(null);
+function EventList() {
+  const [events, setEvents] = useState([]);
+  const [type, setType] = useState("Both");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    loadEvent();
-  }, [id]);
+    const delay = setTimeout(() => {
+      fetchEvents();
+    }, 300);
 
-  const loadEvent = async () => {
-    const res = await API.get(`/events/${id}`);
-    setEvent(res.data);
+    return () => clearTimeout(delay);
+  }, [type, search]);
+
+  const fetchEvents = async () => {
+    const res = await API.get(`/events?type=${type}&search=${search}`);
+
+    // remove duplicates safely
+    const uniqueEvents = Array.from(
+      new Map(res.data.map(item => [item._id, item])).values()
+    );
+
+    setEvents(uniqueEvents);
   };
 
-  if (!event) return <h4>Loading...</h4>;
-
   return (
-    <div className="container">
+    <div>
+      <h2 className="mb-3">🎉 Meetup Events</h2>
 
-      <img
-        src={event.image}
-        alt={event.title}
-        className="img-fluid mb-4"
-        style={{ borderRadius: "10px" }}
-      />
+      {/* FILTERS */}
+      <div className="row mb-4">
+        <div className="col-md-4">
+          <select
+            className="form-select"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <option>Both</option>
+            <option>Online</option>
+            <option>Offline</option>
+          </select>
+        </div>
 
-      <h2>{event.title}</h2>
-
-      <span className="badge bg-success">{event.type}</span>
-
-      <p className="mt-3">{event.description}</p>
-
-      <hr />
-
-      <h5>📌 Event Info</h5>
-      <p><b>Topic:</b> {event.topic}</p>
-      <p><b>Date:</b> {event.date}</p>
-      <p><b>Time:</b> {event.timings}</p>
-      <p><b>Price:</b> {event.price === 0 ? "Free" : `₹${event.price}`}</p>
-
-      <hr />
-
-      <h5>📍 Venue</h5>
-      <p>{event.venue}</p>
-      <p>{event.address}</p>
-
-      <hr />
-
-      <h5>🎤 Speakers</h5>
-      <ul>
-        {event.speakers?.map((s, i) => (
-          <li key={i}>{s}</li>
-        ))}
-      </ul>
-
-      <hr />
-
-      <h5>🏷 Tags</h5>
-      <div>
-        {event.tags?.map((tag, i) => (
-          <span key={i} className="badge bg-secondary me-2">
-            {tag}
-          </span>
-        ))}
+        <div className="col-md-8">
+          <input
+            className="form-control"
+            placeholder="Search by title..."
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
+      {/* EVENT CARDS */}
+      <div className="row">
+        {events.map((e) => (
+          <div className="col-md-4 mb-4" key={e._id}>
+            <div className="card shadow-sm h-100">
+
+              <img
+                src={e.image}
+                alt={e.title}
+                className="card-img-top"
+                style={{ height: "180px", objectFit: "cover" }}
+              />
+
+              <div className="card-body">
+                <h5>{e.title}</h5>
+
+                <span className="badge bg-primary">{e.type}</span>
+
+                <p className="text-muted mt-2">{e.date}</p>
+
+                <Link
+                  to={`/event/${e._id}`}
+                  className="btn btn-dark btn-sm"
+                >
+                  View Details
+                </Link>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default EventDetails;
+export default EventList;
