@@ -8,23 +8,25 @@ router.get("/", async (req, res) => {
 
   let filter = {};
 
+  // type filter
   if (type && type !== "Both") {
     filter.type = type;
   }
 
-if (search) {
-  filter = {
-    ...filter,
-    $or: [
-      { title: { $regex: search, $options: "i" } },
-      { tags: search }
-    ]
-  };
-}
+  // search filter (TITLE + TAGS FIX)
+  if (search) {
+    filter = {
+      ...filter,
+      $or: [
+        { title: { $regex: search, $options: "i" } },
+        { tags: { $elemMatch: { $regex: search, $options: "i" } } }
+      ]
+    };
+  }
+
   const events = await Event.find(filter);
   res.json(events);
 });
-
 // GET SINGLE EVENT
 router.get("/:id", async (req, res) => {
   const event = await Event.findById(req.params.id);
